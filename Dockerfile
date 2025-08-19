@@ -38,7 +38,7 @@ ARG BOCHS_REPO_VERSION=a88d1f687ec83ff82b5318f59dcecb8dab44fc83
 ARG QEMU_REPO=https://github.com/ktock/qemu-wasm
 ARG QEMU_REPO_VERSION=8604ed49a3cde392890b014a8d5a959c8a2fe72a
 
-ARG SOURCE_REPO=git@github.com:fansenze/container2wasm.git
+ARG SOURCE_REPO=https://github.com/fansenze/container2wasm
 ARG SOURCE_REPO_VERSION=dev
 
 ARG ZLIB_VERSION=1.3.1
