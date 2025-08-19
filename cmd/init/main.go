@@ -214,6 +214,14 @@ func doInit() error {
 			o2, _ := exec.Command("ip", "a").CombinedOutput()
 			log.Printf("finished udhcpc: %s\n %s\n", string(o), string(o2))
 		}
+
+		// enable loopback
+		if o, err := exec.Command("ip", "link", "set", "lo", "up").CombinedOutput(); err != nil {
+			return fmt.Errorf("failed lo up: %v: %w", string(o), err)
+		}
+		if o, err := exec.Command("ip", "addr", "add", "127.0.0.1/8", "dev", "lo").CombinedOutput(); err != nil {
+			return fmt.Errorf("failed addr: %v: %w", string(o), err)
+		}
 	}
 
 	if externalBundle {

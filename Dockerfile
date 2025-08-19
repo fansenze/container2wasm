@@ -15,10 +15,10 @@ ARG RUNC_VERSION=v1.3.0
 # ARG INIT_DEBUG=false
 ARG LINUX_LOGLEVEL=7
 ARG INIT_DEBUG=true
-ARG VM_MEMORY_SIZE_MB=128
-ARG VM_CORE_NUMS=1
-ARG QEMU_MIGRATION=true
-ARG NO_VMTOUCH=
+ARG VM_MEMORY_SIZE_MB=1024
+ARG VM_CORE_NUMS=2
+ARG QEMU_MIGRATION=false
+ARG NO_VMTOUCH=true
 ARG EXTERNAL_BUNDLE=
 ARG NO_BINFMT=
 
@@ -38,8 +38,8 @@ ARG BOCHS_REPO_VERSION=a88d1f687ec83ff82b5318f59dcecb8dab44fc83
 ARG QEMU_REPO=https://github.com/ktock/qemu-wasm
 ARG QEMU_REPO_VERSION=8604ed49a3cde392890b014a8d5a959c8a2fe72a
 
-ARG SOURCE_REPO=https://github.com/ktock/container2wasm
-ARG SOURCE_REPO_VERSION=v0.8.2
+ARG SOURCE_REPO=git@github.com:fansenze/container2wasm.git
+ARG SOURCE_REPO_VERSION=dev
 
 ARG ZLIB_VERSION=1.3.1
 ARG GLIB_MINOR_VERSION=2.75
@@ -101,7 +101,7 @@ COPY --link --from=assets / /work
 WORKDIR /work
 RUN --mount=type=cache,target=/root/.cache/go-build \
     --mount=type=cache,target=/go/pkg/mod \
-    go build -o /bin/create-spec ./cmd/create-spec
+    go build -a -o /bin/create-spec ./cmd/create-spec
 COPY --link --from=oci-image-src / /oci
 # This step creates the following files
 # <vm-rootfs>/oci/rootfs          : rootfs dir this Dockerfile creates container's rootfs and used by the container.
@@ -174,7 +174,7 @@ COPY --link --from=assets / /work
 WORKDIR /work
 RUN --mount=type=cache,target=/root/.cache/go-build \
     --mount=type=cache,target=/go/pkg/mod \
-    GOARCH=riscv64 go build -ldflags "-s -w -extldflags '-static'" -tags "osusergo netgo static_build" -o /out/init ./cmd/init
+    GOARCH=riscv64 go build -ldflags "-s -w -extldflags '-static'" -tags "osusergo netgo static_build" -a -o /out/init ./cmd/init
 
 FROM golang-base AS runc-riscv64-dev
 ARG RUNC_VERSION
@@ -488,7 +488,7 @@ RUN git clone -b v6.1 --depth 1 https://github.com/torvalds/linux
 FROM linux-amd64-dev-common AS linux-amd64-dev
 RUN apt-get install -y libelf-dev
 WORKDIR /work-buildlinux/linux
-COPY --link --from=assets ./config/bochs/linux_x86_config ./.config
+COPY --link --from=assets ./config/bochs/linux_x86_config_custom ./.config
 RUN make ARCH=x86 CROSS_COMPILE=x86_64-linux-gnu- -j$(nproc) all && \
     mkdir /out && \
     mv /work-buildlinux/linux/arch/x86/boot/bzImage /out/bzImage && \
@@ -496,7 +496,7 @@ RUN make ARCH=x86 CROSS_COMPILE=x86_64-linux-gnu- -j$(nproc) all && \
 
 FROM linux-amd64-dev-common AS linux-amd64-config-dev
 WORKDIR /work-buildlinux/linux
-COPY --link --from=assets ./config/bochs/linux_x86_config ./.config
+COPY --link --from=assets ./config/bochs/linux_x86_config_custom ./.config
 RUN make ARCH=x86 CROSS_COMPILE=x86_64-linux-gnu- olddefconfig
 
 FROM scratch AS linux-amd64-config
@@ -568,7 +568,7 @@ COPY --link --from=assets / /work
 WORKDIR /work
 RUN --mount=type=cache,target=/root/.cache/go-build \
     --mount=type=cache,target=/go/pkg/mod \
-    GOARCH=amd64 go build -ldflags "-s -w -extldflags '-static'" -tags "osusergo netgo static_build" -o /out/init ./cmd/init
+    GOARCH=amd64 go build -ldflags "-s -w -extldflags '-static'" -tags "osusergo netgo static_build" -a -o /out/init ./cmd/init
 
 FROM gcc-x86-64-linux-gnu-base AS vmtouch-amd64-dev
 RUN git clone https://github.com/hoytech/vmtouch.git && \
@@ -675,7 +675,7 @@ COPY --link --from=assets / /work
 WORKDIR /work
 RUN --mount=type=cache,target=/root/.cache/go-build \
     --mount=type=cache,target=/go/pkg/mod \
-    GOARCH=arm64 go build -ldflags "-s -w -extldflags '-static'" -tags "osusergo netgo static_build" -o /out/init ./cmd/init
+    GOARCH=arm64 go build -ldflags "-s -w -extldflags '-static'" -tags "osusergo netgo static_build" -a -o /out/init ./cmd/init
 
 FROM ubuntu:22.04 AS rootfs-aarch64-dev
 RUN apt-get update -y && apt-get install -y mkisofs
