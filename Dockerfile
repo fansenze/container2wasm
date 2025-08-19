@@ -488,7 +488,7 @@ RUN git clone -b v6.1 --depth 1 https://github.com/torvalds/linux
 FROM linux-amd64-dev-common AS linux-amd64-dev
 RUN apt-get install -y libelf-dev
 WORKDIR /work-buildlinux/linux
-COPY --link --from=assets ./config/bochs/linux_x86_config_custom ./.config
+COPY --link --from=assets ./config/bochs/linux_x86_config ./.config
 RUN make ARCH=x86 CROSS_COMPILE=x86_64-linux-gnu- -j$(nproc) all && \
     mkdir /out && \
     mv /work-buildlinux/linux/arch/x86/boot/bzImage /out/bzImage && \
@@ -496,7 +496,7 @@ RUN make ARCH=x86 CROSS_COMPILE=x86_64-linux-gnu- -j$(nproc) all && \
 
 FROM linux-amd64-dev-common AS linux-amd64-config-dev
 WORKDIR /work-buildlinux/linux
-COPY --link --from=assets ./config/bochs/linux_x86_config_custom ./.config
+COPY --link --from=assets ./config/bochs/linux_x86_config ./.config
 RUN make ARCH=x86 CROSS_COMPILE=x86_64-linux-gnu- olddefconfig
 
 FROM scratch AS linux-amd64-config
