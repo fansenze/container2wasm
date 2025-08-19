@@ -219,9 +219,9 @@ func doInit() error {
 		if o, err := exec.Command("ip", "link", "set", "lo", "up").CombinedOutput(); err != nil {
 			return fmt.Errorf("failed lo up: %v: %w", string(o), err)
 		}
-		if o, err := exec.Command("ip", "addr", "add", "127.0.0.1/8", "dev", "lo").CombinedOutput(); err != nil {
-			return fmt.Errorf("failed addr: %v: %w", string(o), err)
-		}
+		// if o, err := exec.Command("ip", "addr", "add", "127.0.0.1/8", "dev", "lo").CombinedOutput(); err != nil {
+		// 	return fmt.Errorf("failed addr: %v: %w", string(o), err)
+		// }
 	}
 
 	if externalBundle {
