@@ -38,6 +38,7 @@ func main() {
 
 func doInit() error {
 	os.Setenv("PATH", "/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin")
+	os.Setenv("HISTCONTROL", "ignoreboth")
 	os.Setenv("HOME", "/root")
 	os.Setenv("TERM", "vt100")
 
@@ -115,6 +116,14 @@ func doInit() error {
 		log.SetOutput(os.Stdout)
 	} else {
 		log.SetOutput(io.Discard)
+	}
+
+	if o, err := exec.Command("ulimit", "-n", "65535").CombinedOutput(); err != nil {
+		return fmt.Errorf("failed ulimit -n: %v: %w", string(o), err)
+	}
+
+	if o, err := exec.Command("ulimit", "-l", "unlimited").CombinedOutput(); err != nil {
+		return fmt.Errorf("failed ulimit -l: %v: %w", string(o), err)
 	}
 
 	var info runtimeFlags
