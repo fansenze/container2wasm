@@ -122,9 +122,9 @@ func doInit() error {
 	// 	return fmt.Errorf("failed ulimit -n: %v: %w", string(o), err)
 	// }
 
-	if o, err := exec.Command("ulimit", "-l", "unlimited").CombinedOutput(); err != nil {
-		return fmt.Errorf("failed ulimit -l: %v: %w", string(o), err)
-	}
+	// if o, err := exec.Command("ulimit", "-l", "unlimited").CombinedOutput(); err != nil {
+	// 	return fmt.Errorf("failed ulimit -l: %v: %w", string(o), err)
+	// }
 
 	var info runtimeFlags
 	if os.Getenv("NO_RUNTIME_CONFIG") != "1" && os.Getenv("QEMU_MODE") != "1" {
