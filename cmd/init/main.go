@@ -299,8 +299,8 @@ func doInit() error {
 		}
 	}
 
-	if o, err := exec.Command("sh", "-lc", "ulimit -n 65535 && ulimit -l unlimited").CombinedOutput(); err != nil {
-		return fmt.Errorf("sh failed ulimit -l: %v: %w", string(o), err)
+	if err := setNoFile(1<<20, 1<<20); err != nil {
+		return fmt.Errorf("failed to setNoFile: %w", err)
 	}
 
 	var lastErr error
@@ -503,4 +503,9 @@ func patchSpec(s runtimespec.Spec, info runtimeFlags, imageConfig imagespec.Imag
 	}
 	s.Process.Args = append(entrypoint, args...)
 	return s
+}
+
+func setNoFile(soft, hard uint64) error {
+	rl := &syscall.Rlimit{Cur: soft, Max: hard}
+	return syscall.Setrlimit(syscall.RLIMIT_NOFILE, rl)
 }
