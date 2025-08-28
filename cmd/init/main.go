@@ -299,8 +299,8 @@ func doInit() error {
 		}
 	}
 
-	if o, err := exec.Command("bash", "-lc", "ulimit -n 65535 && ulimit -l unlimited").CombinedOutput(); err != nil {
-		return fmt.Errorf("failed ulimit -l: %v: %w", string(o), err)
+	if o, err := exec.Command("sh", "-lc", "ulimit -n 65535 && ulimit -l unlimited").CombinedOutput(); err != nil {
+		return fmt.Errorf("sh failed ulimit -l: %v: %w", string(o), err)
 	}
 
 	var lastErr error
