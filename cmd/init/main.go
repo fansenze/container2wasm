@@ -299,10 +299,6 @@ func doInit() error {
 		}
 	}
 
-	if err := setNoFile(1<<20, 1<<20); err != nil {
-		return fmt.Errorf("failed to setNoFile: %w", err)
-	}
-
 	var lastErr error
 	for _, cmd := range cfg.Cmd {
 		log.Printf("executing: %+v\n", cmd)
@@ -503,9 +499,4 @@ func patchSpec(s runtimespec.Spec, info runtimeFlags, imageConfig imagespec.Imag
 	}
 	s.Process.Args = append(entrypoint, args...)
 	return s
-}
-
-func setNoFile(soft, hard uint64) error {
-	rl := &syscall.Rlimit{Cur: soft, Max: hard}
-	return syscall.Setrlimit(syscall.RLIMIT_NOFILE, rl)
 }
