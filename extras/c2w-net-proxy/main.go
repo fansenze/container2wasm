@@ -270,6 +270,8 @@ func doHttpRoundTrip(req *http.Request) (*http.Response, error) {
 	}
 
 	var isOK uint32 = 0
+	waitTime := 1 * time.Millisecond // 从1ms开始
+	maxWait := 10 * time.Millisecond
 	for {
 		res := http_isreadable(id, uint32(uintptr(unsafe.Pointer(&isOK))))
 		if res != 0 {
@@ -278,7 +280,11 @@ func doHttpRoundTrip(req *http.Request) (*http.Response, error) {
 		if isOK == 1 {
 			break
 		}
-		time.Sleep(10 * time.Millisecond)
+		time.Sleep(waitTime)
+		// 递增等待时间，但不超过最大值
+		if waitTime < maxWait {
+			waitTime = waitTime * 2
+		}
 	}
 
 	var respD []byte = make([]byte, 4096)
