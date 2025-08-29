@@ -38,7 +38,6 @@ func main() {
 
 func doInit() error {
 	os.Setenv("PATH", "/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin")
-	os.Setenv("HISTCONTROL", "ignoreboth")
 	os.Setenv("HOME", "/root")
 	os.Setenv("TERM", "vt100")
 
