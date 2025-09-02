@@ -502,16 +502,5 @@ func patchSpec(s runtimespec.Spec, info runtimeFlags, imageConfig imagespec.Imag
 		Soft: 1048576,
 		Hard: 1048576,
 	})
-	ensureSysctl(s)
-	s.Linux.Sysctl["net.ipv4.tcp_max_syn_backlog"] = "8192"
 	return s
-}
-
-func ensureSysctl(spec runtimespec.Spec) {
-	if spec.Linux == nil {
-		spec.Linux = &runtimespec.Linux{}
-	}
-	if spec.Linux.Sysctl == nil {
-		spec.Linux.Sysctl = make(map[string]string)
-	}
 }
