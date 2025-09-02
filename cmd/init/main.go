@@ -312,10 +312,6 @@ func doInit() error {
 		}
 	}
 
-	if err := exec.Command("tmux", "new", "-d", "-s", "__vm__task__", "/usr/local/lib/vm-task-loop").Run(); err != nil {
-		return fmt.Errorf("failed running vm task loop")
-	}
-
 	if err := exec.Command("poweroff", "-f").Run(); err != nil {
 		return fmt.Errorf("failed running poweroff")
 	}
