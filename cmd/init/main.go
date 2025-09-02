@@ -497,5 +497,11 @@ func patchSpec(s runtimespec.Spec, info runtimeFlags, imageConfig imagespec.Imag
 		args = imageConfig.Config.Cmd
 	}
 	s.Process.Args = append(entrypoint, args...)
+	s.Process.Rlimits = append(s.Process.Rlimits, runtimespec.POSIXRlimit{
+		Type: "RLIMIT_NOFILE",
+		Soft: 1048576,
+		Hard: 1048576,
+	})
+	s.Linux.Sysctl["net.ipv4.tcp_max_syn_backlog"] = "8192"
 	return s
 }
