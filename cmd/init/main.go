@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"errors"
+	"flag"
 	"fmt"
 	"io"
 	"log"
@@ -296,6 +297,16 @@ func doInit() error {
 				return fmt.Errorf("cannot mount %q: %w", f, err)
 			}
 		}
+	}
+
+	var workspaceFd int
+	flag.IntVar(&workspaceFd, "workspace-fd", -1, "fd for the workspace filesystem")
+	flag.Parse()
+
+	log.Printf("using workspaceFd at (fd=%d)\n", workspaceFd)
+
+	if workspaceFd != -1 {
+		os.NewFile(uintptr(workspaceFd), "")
 	}
 
 	var lastErr error
